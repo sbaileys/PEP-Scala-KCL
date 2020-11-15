@@ -58,12 +58,13 @@ def is_hard(n: Long) : Boolean = {
 
 // def last_odd_rec(n : Long, odd_num : Long) : Long = {
 //     if (n==1) odd_num 
-//     if (n%2==0) last_odd_rec(n/2, odd_num)
+//     else if (n%2==0) last_odd_rec(n/2, odd_num)
 //     else {
 //         if(is_hard(n)) last_odd_rec((3*n)+1, n)
 //         else last_odd_rec((3*n)+1, odd_num)
 //     }
 // }
+
 def last_odd(n: Long) : Long = {
     def getLastOdd(n : Long, lastOdd : Long) : Long = {
         if (n == 1) lastOdd
@@ -72,8 +73,7 @@ def last_odd(n: Long) : Long = {
             if (is_hard(n)) getLastOdd(3 * n + 1, n)
             else getLastOdd(3*n+1, lastOdd)
         }
-    }
+    } 
     getLastOdd(n, 1)
 }
-
 }
