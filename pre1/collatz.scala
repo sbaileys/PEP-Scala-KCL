@@ -10,8 +10,15 @@ object CW6a {
 //    performs the recursion. The function should expect
 //    arguments in the range of 1 to 1 Million.
 
-def collatz(n: Long) : Long = ???
+def collatz(n: Long) : Long = {
+    collatz_rec(n, 0)
+}
 
+def collatz_rec(n: Long, steps: Int) : Long = {
+    if(n==1) steps
+    else if((n%2)==0) collatz_rec(n/2, 1 + steps)
+    else collatz_rec(3*n + 1, 1 + steps)
+}
 
 //(2) Complete the collatz_max function below. It should
 //    calculate how many steps are needed for each number 
@@ -22,7 +29,11 @@ def collatz(n: Long) : Long = ???
 //    the maximum number of steps and the second is the 
 //    corresponding number.
 
-def collatz_max(bnd: Long) : (Long, Long) = ???
+def collatz_max(bnd: Long) : (Long, Long) = {
+    val lst = for (i <- 1L to bnd) yield collatz(i)
+    val max_col = lst.max
+    (max_col, lst.indexOf(max_col)+1)
+}
 
 //(3) Implement a function that calculates the last_odd
 //    number in a collatz series.  For this implement an
@@ -33,11 +44,24 @@ def collatz_max(bnd: Long) : (Long, Long) = ???
 //    and also assume that the input of last_odd will not 
 //    be a power of 2.
 
-def is_pow_of_two(n: Long) : Boolean = ???
-
-def is_hard(n: Long) : Boolean = ???
-
-def last_odd(n: Long) : Long = ???
-
+def is_pow_of_two(n: Long) : Boolean = {
+    (n & (n - 1)) == 0
 }
 
+def is_hard(n: Long) : Boolean = {
+    is_pow_of_two((3*n)+1)
+}
+
+def last_odd(n: Long) : Long = {
+    last_odd_rec(n, 1)
+}
+
+def last_odd_rec(n : Long, odd_num : Long) : Long = {
+    if (n==1) odd_num 
+    if (n%2==1) {
+        if(is_hard(n)) last_odd_rec((3*n)+1, n)
+        else last_odd_rec((3*n)+1, odd_num)
+    }
+    else last_odd_rec(n/2, odd_num)
+}
+}
