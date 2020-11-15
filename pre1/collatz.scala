@@ -64,16 +64,4 @@ def last_odd_rec(n : Long, odd_num : Long) : Long = {
         else last_odd_rec((3*n)+1, odd_num)
     }
 }
-
-// def last_odd(n: Long) : Long = {
-//     def getLastOdd(n : Long, lastOdd : Long) : Long = {
-//         if (n == 1) lastOdd
-//         else if (n % 2 == 0) getLastOdd(n/2, lastOdd)
-//         else {
-//             if (is_hard(n)) getLastOdd(3 * n + 1, n)
-//             else getLastOdd(3*n+1, lastOdd)
-//         }
-//     } 
-//     getLastOdd(n, 1)
-// }
 }
