@@ -1,9 +1,8 @@
 // Preliminary Part about Code Similarity
 //========================================
-
+import scala.math.max
 
 object CW7a { 
-
 
 //(1) Complete the clean function below. It should find
 //    all words in a string using the regular expression
@@ -13,18 +12,18 @@ object CW7a {
 //
 //    The words should be Returned as a list of strings.
 
-
-def clean(s: String) : List[String] = ???
-  
-
+def clean(s: String) : List[String] = {
+     val regExt = "\\w+".r
+     regExt.findAllIn(s).toList
+}
 
 //(2) The function occurrences calculates the number of times  
 //    strings occur in a list of strings. These occurrences should 
 //    be calculated as a Map from strings to integers.
 
-
-def occurrences(xs: List[String]): Map[String, Int] = ???
-
+def occurrences(xs: List[String]): Map[String, Int] = {
+    xs.groupBy(identity).view.mapValues(_.size).toMap
+}
 
 //(3) This functions calculates the dot-product of two documents
 //    (list of strings). For this it calculates the occurrence
@@ -33,7 +32,15 @@ def occurrences(xs: List[String]): Map[String, Int] = ???
 //    The function finally sums up all products. 
 
 
-def prod(lst1: List[String], lst2: List[String]) : Int = ???
+def prod(lst1: List[String], lst2: List[String]) : Int = {
+    val map1 = occurrences(lst1)
+    val map2 = occurrences(lst2)
+    val overlap = for(n <- map1;
+        m <- map2;
+        if n._1 == m._1) yield (n._2 * m._2)
+    
+    overlap.sum
+}
 
 
 //(4) Complete the functions overlap and similarity. The overlap of
@@ -42,10 +49,14 @@ def prod(lst1: List[String], lst2: List[String]) : Int = ???
 //    of the cleaned strings (see (1)).  
 
 
-def overlap(lst1: List[String], lst2: List[String]) : Double = ???
+def overlap(lst1: List[String], lst2: List[String]) : Double = {
+    val top = prod(lst1, lst2)
+    val bottom = max(prod(lst1, lst1), prod(lst2, lst2))
+    top/bottom.toDouble
+}
 
-def similarity(s1: String, s2: String) : Double = ???
-
+def similarity(s1: String, s2: String) : Double = 
+    overlap(clean(s1), clean(s2))
 
 
 /* Test cases
