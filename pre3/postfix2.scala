@@ -1,5 +1,4 @@
 import scala.annotation.tailrec
-import scala.collection.immutable
 import scala.math.pow
 // Shunting Yard Algorithm 
 // including Associativity for Operators 

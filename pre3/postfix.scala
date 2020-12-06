@@ -1,5 +1,4 @@
 import scala.annotation.tailrec
-import scala.collection.immutable
 // Shunting Yard Algorithm
 // by Edsger Dijkstra
 // ========================
