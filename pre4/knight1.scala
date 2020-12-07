@@ -8,8 +8,6 @@ object CW9a {
 // templates below. Also have a look whether the functions
 // at the end are of any help.
 
-
-
 type Pos = (Int, Int)    // a position on a chessboard 
 type Path = List[Pos]    // a path...a list of positions
 
@@ -27,14 +25,6 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 - 1), (x._1 + 1, x._2 - 2), (x._1 - 1, x._2 - 2), (x._1 - 2, x._2 - 1), (x._1 - 2, x._2 + 1), (x._1 - 1, x._2 + 2))
 allMoves.filter(x => is_legal(dim, path, x))
 }
-
-legal_moves(8, Nil, (2,2)) == List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4))
-legal_moves(8, Nil, (7,7)) == List((6,5), (5,6))
-legal_moves(8, List((4,1), (1,0)), (2,2)) == List((3,4), (4,3), (3,0), (0,1), (0,3), (1,4))
-legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6))
-legal_moves(1, Nil, (0,0)) == Nil
-legal_moves(2, Nil, (0,0)) == Nil
-legal_moves(3, Nil, (0,0)) == List((1,2), (2,1))
 
 //some testcases
 //
@@ -92,33 +82,33 @@ def first_tour(dim: Int, path: Path) : Option[Path] = ???
  
 
 
-//Helper functions
+// //Helper functions
 
 
-// for measuring time
-def time_needed[T](code: => T) : T = {
-  val start = System.nanoTime()
-  val result = code
-  val end = System.nanoTime()
-  println(f"Time needed: ${(end - start) / 1.0e9}%3.3f secs.")
-  result
-}
+// // for measuring time
+// def time_needed[T](code: => T) : T = {
+//   val start = System.nanoTime()
+//   val result = code
+//   val end = System.nanoTime()
+//   println(f"Time needed: ${(end - start) / 1.0e9}%3.3f secs.")
+//   result
+// }
 
-// can be called for example with
-//     time_needed(count_tours(dim, List((0, 0))))
-// in order to print out the time that is needed for 
-// running count_tours
+// // can be called for example with
+// //     time_needed(count_tours(dim, List((0, 0))))
+// // in order to print out the time that is needed for 
+// // running count_tours
 
 
-// for printing a board
-def print_board(dim: Int, path: Path): Unit = {
-  println()
-  for (i <- 0 until dim) {
-    for (j <- 0 until dim) {
-      print(f"${path.reverse.indexOf((j, dim - i - 1))}%3.0f ")
-    }
-    println()
-  } 
-}
+// // for printing a board
+// def print_board(dim: Int, path: Path): Unit = {
+//   println()
+//   for (i <- 0 until dim) {
+//     for (j <- 0 until dim) {
+//       print(f"${path.reverse.indexOf((j, dim - i - 1))}%3.0f ")
+//     }
+//     println()
+//   } 
+// }
 
 }
