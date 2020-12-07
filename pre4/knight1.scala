@@ -1,7 +1,6 @@
 // Preliminary Part about finding Knight's tours
 //===============================================
 
-
 object CW9a {
 
 // If you need any auxiliary function, feel free to 
@@ -17,25 +16,27 @@ type Path = List[Pos]    // a path...a list of positions
 //(1) Complete the function that tests whether the position x
 //    is inside the board and not yet element in the path.
 
-def is_legal(dim: Int, path: Path, x: Pos) : Boolean = ???
-
-
+def is_legal(dim: Int, path: Path, x: Pos) : Boolean = 
+!path.contains(x) && x._1 >= 0 && x._2 >= 0 && x._1 < dim-1 && x._2 < dim-1
 
 //(2) Complete the function that calculates for a position x
 //    all legal onward moves that are not already in the path. 
 //    The moves should be ordered in a "clockwise" manner.
  
-def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = ???
+def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
+val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 - 1), (x._1 + 1, x._2 - 2), (x._1 - 1, x._2 - 2), (x._1 - 2, x._2 - 1), (x._1 - 2, x._2 + 1), (x._1 - 1, x._2 + 2))
+allMoves.filter(x => is_legal(dim, path, x))
+}
 
 
 //some testcases
 //
-//assert(legal_moves(8, Nil, (2,2)) == 
+// assert(legal_moves(8, Nil, (2,2)) == 
 //  List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4)))
-//assert(legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
-//assert(legal_moves(8, List((4,1), (1,0)), (2,2)) == 
+// assert(legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
+// assert(legal_moves(8, List((4,1), (1,0)), (2,2)) == 
 //  List((3,4), (4,3), (3,0), (0,1), (0,3), (1,4)))
-//assert(legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6)))
+// assert(legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6)))
 
 
 //(3) Complete the two recursive functions below. 
@@ -43,10 +44,22 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = ???
 //    given path. The first function counts all possible tours, 
 //    and the second collects all tours in a list of paths.
 
-def count_tours(dim: Int, path: Path) : Int = ???
+def count_tours(dim: Int, path: Path) : Int = {
+  if(path.length == dim * dim) 1
+  else {
+    val allLegalMoves = legal_moves(dim, path, path.head)
+    (for(i <- allLegalMoves) yield count_tours(dim, i::path)).sum
+  }
+}
 
-def enum_tours(dim: Int, path: Path) : List[Path] = ???
 
+def enum_tours(dim: Int, path: Path) : List[Path] = {
+  if(path.length == dim * dim) List(path)
+  else {
+    val allLegalMoves = legal_moves(dim, path, path.head)
+    (for(i <- allLegalMoves) yield enum_tours(dim, i::path)).flatten
+  }
+}
 
 //(4) Implement a first-function that finds the first 
 //    element, say x, in the list xs where f is not None. 
@@ -72,7 +85,7 @@ def first_tour(dim: Int, path: Path) : Option[Path] = ???
  
 
 
-/* Helper functions
+//Helper functions
 
 
 // for measuring time
@@ -100,8 +113,5 @@ def print_board(dim: Int, path: Path): Unit = {
     println()
   } 
 }
-
-
-*/
 
 }
