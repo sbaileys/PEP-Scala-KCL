@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 // Core Part about finding a single tour for a board using the
 // Warnsdorf Rule
 //==============================================================
@@ -42,7 +43,7 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 //    element, say x, in the list xs where f is not None. 
 //    In that case Return f(x), otherwise None. If possible,
 //    calculate f(x) only once.
-
+@tailrec
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
     case Nil => None
     case x::xs if f(x).isDefined => f(x)
@@ -50,9 +51,7 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 }
 
 // testcases
-//
 // def foo(x: (Int, Int)) = if (x._1 > 3) Some(List(x)) else None
-
 // first(List((1, 0),(2, 0),(3, 0),(4, 0)), foo)   // Some(List((4,0)))
 // first(List((1, 0),(2, 0),(3, 0)), foo)          // None
 
@@ -66,6 +65,9 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
 }
 
+// is first_tour(6, List((0, 0))) ok?
+// is first_tour(4, List((0, 0))) == None
+//tryout
 
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
@@ -73,8 +75,8 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
 //    should come first.
 
 
-def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = ???
-
+def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = 
+legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
 
 //(7) Complete the function that searches for a single *closed* 
 //    tour using the ordered_moves function from (6). This
