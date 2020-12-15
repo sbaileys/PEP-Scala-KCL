@@ -13,6 +13,7 @@ type Path = List[Pos]    // a path...a list of positions
 
 //(1) Complete the function that tests whether the position x
 //    is inside the board and not yet element in the path.
+//try
 
 def is_legal(dim: Int, path: Path, x: Pos) : Boolean = 
 !path.contains(x) && x._1 >= 0 && x._2 >= 0 && x._1 < dim && x._2 < dim
@@ -84,7 +85,6 @@ def first_tour(dim: Int, path: Path) : Option[Path] =
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
 
 // //Helper functions
-
 
 // // for measuring time
 // def time_needed[T](code: => T) : T = {
