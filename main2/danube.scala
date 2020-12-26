@@ -17,7 +17,8 @@ import scala.util._
 //     the header of the CSV-file). The result is a list of strings (lines
 //     in the file).
 
-def get_csv_url(url: String) : List[String] = ???
+def get_csv_url(url: String) : List[String] = 
+Source.fromURL(url).mkString.split("\n").toList
 
 
 val ratings_url = """https://nms.kcl.ac.uk/christian.urban/ratings.csv"""
@@ -26,10 +27,11 @@ val movies_url = """https://nms.kcl.ac.uk/christian.urban/movies.csv"""
 // testcases
 //-----------
 //:
-//val movies = get_csv_url(movies_url)
+// val movies = get_csv_url(movies_url)
+// val ratings = get_csv_url(ratings_url)
 
-//ratings.length  // 87313
-//movies.length   // 9742
+// ratings.length  // 87313
+// movies.length   // 9742
 
 
 
