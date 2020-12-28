@@ -23,8 +23,6 @@ def get_january_data(symbol: String, year: Int) : List[String] = {
     data.filter(_.startsWith(year.toString)).toList
 }
 
-//get_january_data("FB", 2014)
-
 // (2) From the output of the get_january_data function, the next function 
 //     should extract the first line (if it exists) and the corresponding
 //     first trading price in that year with type Option[Double]. If no line 
@@ -37,22 +35,14 @@ def get_first_price(symbol: String, year: Int) : Option[Double] = {
     else Some(data.head.split(",").last.toDouble)
 }
 
-get_first_price("FB", 2014)
-
 // (3) Complete the function below that obtains all first prices
 //     for the stock symbols from a portfolio (list of strings) and 
 //     for the given range of years. The inner lists are for the
 //     stock symbols and the outer list for the years.
 
-
 def get_prices(portfolio: List[String], years: Range) : List[List[Option[Double]]] = {
     (for (i <- years) yield portfolio.map( x => get_first_price(x, i))).toList
 }
-
-val a = List("GOOG", "AAPL")
-val b = (2010 to 2012)
-val prices = get_prices(a, b)
-
 
 // (4) The function below calculates the change factor (delta) between
 //     a price in year n and a price in year n + 1. 
@@ -74,27 +64,16 @@ def get_deltas(data: List[List[Option[Double]]]) :  List[List[Option[Double]]] =
             (for (i <- tuple.last.indices) yield get_delta(tuple.head(i), tuple.last(i))).toList).toList
 }
 
-//get_deltas(prices)
-
 // (6) Write a function that given change factors, a starting balance and an index,
 //     calculates the yearly yield, i.e. new balance, according to our dumb investment 
 //     strategy. Index points to a year in the data list.
 
 def yearly_yield(data: List[List[Option[Double]]], balance: Long, year: Int): Long = {
-  val portfolio = data(year).length
-  val investment = (balance/portfolio)
-  if (data.nonEmpty) {
-      val profit = (for (i <- 0 until portfolio) yield (investment*data(year)(i).get))
-      (balance + profit.sum).toLong
-  }
-  else balance
+  val portfolio =  data(year).filter(_.nonEmpty)
+  val investment = (balance/portfolio.length)
+  val newBalance = ((for (i <- 0 until portfolio.length) yield (investment*portfolio(i).get)).sum)
+  balance + newBalance.toLong
 }
-
-// val data = get_deltas(prices)
-// val balance = 100
-// val year = 2010
-
-// yearly_yield(data, balance, year)
 
 // (7) Write a function compound_yield that calculates the overall balance for a 
 //     range of years where in each year the yearly profit is compounded to the new 
@@ -102,11 +81,16 @@ def yearly_yield(data: List[List[Option[Double]]], balance: Long, year: Int): Lo
 //     results generated under (6). The function investment calls compound_yield
 //     with the appropriate deltas and the first index.
 
-def compound_yield(data: List[List[Option[Double]]], balance: Long, index: Int) : Long = ???
+def compound_yield(data: List[List[Option[Double]]], balance: Long, year: Int) : Long = {
+  if (year == data.size) balance
+  else compound_yield(data, yearly_yield(data, balance, year), year + 1)
+}
 
-def investment(portfolio: List[String], years: Range, start_balance: Long) : Long = 
-compound_yield(get_deltas(get_prices(portfolio, years)), start_balance, years.end - years.start)
-
+def investment(portfolio: List[String], years: Range, start_balance: Long) : Long = {
+  val prices = get_prices(portfolio, years)
+  val deltas = get_deltas(prices)
+  compound_yield(deltas, start_balance, 0)
+}
 
 //Test cases for the two portfolios given above
 
