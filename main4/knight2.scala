@@ -59,8 +59,8 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
     case Nil => None
     case x::xs => {
-    if (f(x).isDefined) f(x)
-    else first(xs, f)
+      if (f(x).isDefined) f(x)
+      else first(xs, f)
     }
 }
 
@@ -79,17 +79,18 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
 }
 
-// is first_tour(6, List((0, 0))) ok?
-// is first_tour(4, List((0, 0))) == None
-//tryout
+is first_tour(6, List((0, 0))) ok?
+is first_tour(4, List((0, 0))) == None
+tryout
 
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
 //    rule. That means moves with the fewest legal onward moves 
 //    should come first.
 
-def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = 
+def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
+}
 
 //(7) Complete the function that searches for a single *closed* 
 //    tour using the ordered_moves function from (6). This

@@ -30,6 +30,7 @@ val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 
 allMoves.filter(x => is_legal(dim, path, x))
 }
 
+ //comment
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
 //    rule. That means moves with the fewest legal onward moves 
