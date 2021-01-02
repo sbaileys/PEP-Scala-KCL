@@ -15,13 +15,25 @@ object CW9b {
 type Pos = (Int, Int)    // a position on a chessboard 
 type Path = List[Pos]    // a path...a list of positions
 
+//(1) Complete the function that tests whether the position x
+//    is inside the board and not yet element in the path.
+
 def is_legal(dim: Int, path: Path, x: Pos) : Boolean = 
 !path.contains(x) && x._1 >= 0 && x._2 >= 0 && x._1 < dim && x._2 < dim
 
+//(2) Complete the function that calculates for a position x
+//    all legal onward moves that are not already in the path. 
+//    The moves should be ordered in a "clockwise" manner.
+ 
 def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 - 1), (x._1 + 1, x._2 - 2), (x._1 - 1, x._2 - 2), (x._1 - 2, x._2 - 1), (x._1 - 2, x._2 + 1), (x._1 - 1, x._2 + 2))
 allMoves.filter(x => is_legal(dim, path, x))
 }
+
+//(3) Complete the two recursive functions below. 
+//    They exhaustively search for knight's tours starting from the 
+//    given path. The first function counts all possible tours, 
+//    and the second collects all tours in a list of paths.
 
 def count_tours(dim: Int, path: Path) : Int = {
   if(path.length == dim * dim) 1
@@ -74,7 +86,6 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
 //    rule. That means moves with the fewest legal onward moves 
 //    should come first.
 
-
 def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = 
 legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
 
@@ -82,20 +93,26 @@ legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
 //    tour using the ordered_moves function from (6). This
 //    function will be tested on a 6 x 6 board. 
 
-
-def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = ???
-
+def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
+  if (path.size == dim * dim && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
+  else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x :: path))
+}
 
 //(8) Same as (7) but searches for *non-closed* tours. This 
 //    version of the function will be called with dimensions of 
 //    up to 30 * 30.
 
-def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = ???
+def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
+  recursive_heuritics(dim, path, path::List())
 
-
+@tailrec
+def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
+  case Nil => None
+  case x::xs => if (x.size == dim * dim) Some(x) 
+  else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
+}
 
 //Helper functions
-
 
 // // for measuring time
 // def time_needed[T](code: => T) : T = {
