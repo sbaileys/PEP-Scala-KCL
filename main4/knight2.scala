@@ -58,8 +58,10 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 @tailrec
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
     case Nil => None
-    case x::xs if f(x).isDefined => f(x)
-    case x::xs if !f(x).isDefined => first(xs, f)
+    case x::xs => {
+    if (f(x).isDefined) f(x)
+    else first(xs, f)
+    }
 }
 
 // testcases
@@ -94,7 +96,7 @@ legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
 //    function will be tested on a 6 x 6 board. 
 
 def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-  if (path.size == dim * dim && (legal_moves(dim, path.last, path.last).contains(path.head))) Some(path)
+  if (path.size == dim * dim && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
   else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
 }
 
@@ -103,7 +105,7 @@ def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
 //    up to 30 * 30.
 
 def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-  if (path.size == dim * dim && !(legal_moves(dim, path, path.last).contains(path.head))) Some(path)
+  if (path.size == dim * dim && !(legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
   else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
 }
 
