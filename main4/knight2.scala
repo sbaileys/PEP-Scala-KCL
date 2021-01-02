@@ -105,10 +105,10 @@ def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
 //    version of the function will be called with dimensions of 
 //    up to 30 * 30.
 
-def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-  if (path.size == dim * dim && !(legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
-  else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
-}
+// def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
+//   if (path.size == dim * dim && !(legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
+//   else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
+// }
 
 // def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
 //   recursive_heuritics(dim, path, path::List())
