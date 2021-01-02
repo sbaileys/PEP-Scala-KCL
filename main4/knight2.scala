@@ -5,7 +5,6 @@ import scala.annotation.tailrec
 
 object CW9b {
 
-
 // !!! Copy any function you need from file knight1.scala !!!
 //
 // If you need any auxiliary function, feel free to 
@@ -30,6 +29,15 @@ val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 
 allMoves.filter(x => is_legal(dim, path, x))
 }
 
+//some testcases
+// assert(legal_moves(8, Nil, (2,2)) == 
+//  List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4)))
+// assert(legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
+// assert(legal_moves(8, List((4,1), (1,0)), (2,2)) == 
+//  List((3,4), (4,3), (3,0), (0,1), (0,3), (1,4)))
+// assert(legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6)))
+
+
 //(3) Complete the two recursive functions below. 
 //    They exhaustively search for knight's tours starting from the 
 //    given path. The first function counts all possible tours, 
@@ -43,6 +51,7 @@ def count_tours(dim: Int, path: Path) : Int = {
   }
 }
 
+
 def enum_tours(dim: Int, path: Path) : List[Path] = {
   if(path.length == dim * dim) List(path)
   else {
@@ -55,6 +64,7 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 //    element, say x, in the list xs where f is not None. 
 //    In that case Return f(x), otherwise None. If possible,
 //    calculate f(x) only once.
+
 @tailrec
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
     case Nil => None
@@ -74,14 +84,12 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 //    trying out onward moves, and searches recursively for a
 //    knight tour on a dim * dim-board.
 
-def first_tour(dim: Int, path: Path) : Option[Path] = {
+def first_tour(dim: Int, path: Path) : Option[Path] =
     if (path.size == dim * dim) Some(path)
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
-}
 
-is first_tour(6, List((0, 0))) ok?
-is first_tour(4, List((0, 0))) == None
-tryout
+// is first_tour(6, List((0, 0))) ok?
+// is first_tour(4, List((0, 0))) == None
 
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 
