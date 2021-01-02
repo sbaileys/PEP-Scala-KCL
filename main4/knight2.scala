@@ -94,23 +94,28 @@ legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
 //    function will be tested on a 6 x 6 board. 
 
 def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-  if (path.size == dim * dim && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
-  else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x :: path))
+  if (path.size == dim * dim && (legal_moves(dim, path.last, path.last).contains(path.head))) Some(path)
+  else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
 }
 
 //(8) Same as (7) but searches for *non-closed* tours. This 
 //    version of the function will be called with dimensions of 
 //    up to 30 * 30.
 
-def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
-  recursive_heuritics(dim, path, path::List())
-
-@tailrec
-def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
-  case Nil => None
-  case x::xs => if (x.size == dim * dim) Some(x) 
-  else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
+def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
+  if (path.size == dim * dim && !(legal_moves(dim, path, path.last).contains(path.head))) Some(path)
+  else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
 }
+
+// def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
+//   recursive_heuritics(dim, path, path::List())
+
+// @tailrec
+// def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
+//   case Nil => None
+//   case x::xs => if (x.size == dim * dim) Some(x) 
+//   else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
+// }
 
 //Helper functions
 

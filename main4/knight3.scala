@@ -21,6 +21,14 @@ type Path = List[Pos]    // a path...a list of positions
 //    30 seconds.
 
 
-def tour_on_mega_board(dim: Int, path: Path) : Option[Path] = ???
+def tour_on_mega_board(dim: Int, path: Path) : Option[Path] = 
+    recursive_mega(dim, path, path::List())
+
+@tailrec
+def recursive_mega(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
+  case Nil => None
+  case x::xs => if (x.size == dim * dim) Some(x) 
+  else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
+}
 
 }
