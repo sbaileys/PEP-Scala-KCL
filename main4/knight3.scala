@@ -45,13 +45,14 @@ def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] =
 //    and starting field (0, 0). It has to produce a solution within
 //    30 seconds.
 
-@tailrec
-def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
-  case Nil => None
-  case x::xs => if (x.length == dim * dim) Some(x) else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
-}
-
 def tour_on_mega_board(dim: Int, path: Path) : Option[Path] =
     recursive_mega(dim, path, path::List())
+
+@tailrec
+def recursive_mega(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
+  case Nil => None
+  case x::xs => if (x.length == dim * dim) Some(x) 
+  else recursive_mega(dim, path, ordered_moves(dim, x, x.head).map(_::x))
+}
 
 }
