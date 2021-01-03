@@ -21,7 +21,6 @@ type Path = List[Pos]    // a path...a list of positions
 def is_legal(dim: Int, path: Path, x: Pos) : Boolean = 
     !path.contains(x) && x._1 >= 0 && x._2 >= 0 && x._1 < dim && x._2 < dim
 
-
 //(2) Complete the function that calculates for a position x
 //    all legal onward moves that are not already in the path. 
 //    The moves should be ordered in a "clockwise" manner.
