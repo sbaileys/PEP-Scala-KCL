@@ -18,15 +18,15 @@ type Path = List[Pos]    // a path...a list of positions
 //    is inside the board and not yet element in the path.
 
 def is_legal(dim: Int, path: Path, x: Pos) : Boolean = 
-!path.contains(x) && x._1 >= 0 && x._2 >= 0 && x._1 < dim && x._2 < dim
+  !path.contains(x) && x._1 >= 0 && x._2 >= 0 && x._1 < dim && x._2 < dim
 
 //(2) Complete the function that calculates for a position x
 //    all legal onward moves that are not already in the path. 
 //    The moves should be ordered in a "clockwise" manner.
  
 def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
-val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 - 1), (x._1 + 1, x._2 - 2), (x._1 - 1, x._2 - 2), (x._1 - 2, x._2 - 1), (x._1 - 2, x._2 + 1), (x._1 - 1, x._2 + 2))
-allMoves.filter(x => is_legal(dim, path, x))
+  val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 - 1), (x._1 + 1, x._2 - 2), (x._1 - 1, x._2 - 2), (x._1 - 2, x._2 - 1), (x._1 - 2, x._2 + 1), (x._1 - 1, x._2 + 2))
+  allMoves.filter(x => is_legal(dim, path, x))
 }
 
 //some testcases
@@ -69,8 +69,8 @@ def enum_tours(dim: Int, path: Path) : List[Path] = {
 def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
     case Nil => None
     case x::xs => {
-      if (f(x).isDefined) f(x)
-      else first(xs, f)
+      val position = f(x)
+      if (f(x).isDefined) position else first(xs, f)
     }
 }
 
@@ -84,10 +84,10 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 //    trying out onward moves, and searches recursively for a
 //    knight tour on a dim * dim-board.
 
-def first_tour(dim: Int, path: Path) : Option[Path] =
+def first_tour(dim: Int, path: Path) : Option[Path] = {
     if (path.size == dim * dim) Some(path)
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
-
+}
 // is first_tour(6, List((0, 0))) ok?
 // is first_tour(4, List((0, 0))) == None
 
@@ -96,37 +96,34 @@ def first_tour(dim: Int, path: Path) : Option[Path] =
 //    rule. That means moves with the fewest legal onward moves 
 //    should come first.
 
-def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
-legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
-}
+def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] =   
+  legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
+
 
 //(7) Complete the function that searches for a single *closed* 
 //    tour using the ordered_moves function from (6). This
 //    function will be tested on a 6 x 6 board. 
 
 def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-  if (path.size == dim * dim && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
+  if (path.length == dim * dim && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
   else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
 }
+
+//first_closed_tour_heuristics(6, List((3,3))) 
 
 //(8) Same as (7) but searches for *non-closed* tours. This 
 //    version of the function will be called with dimensions of 
 //    up to 30 * 30.
 
-// def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-//   if (path.size == dim * dim && !(legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
-//   else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
-// }
+def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
+  recursive_heuritics(dim, path, path::List())
 
-// def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
-//   recursive_heuritics(dim, path, path::List())
-
-// @tailrec
-// def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
-//   case Nil => None
-//   case x::xs => if (x.size == dim * dim) Some(x) 
-//   else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
-// }
+@tailrec
+def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
+  case Nil => None
+  case x::xs => if (x.length == dim * dim) Some(x) 
+  else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
+}
 
 //Helper functions
 
