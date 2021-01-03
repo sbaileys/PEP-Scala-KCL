@@ -70,7 +70,7 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
     case Nil => None
     case x::xs => {
       val position = f(x)
-      if (f(x).isDefined) position else first(xs, f)
+      if (position.isDefined) position else first(xs, f)
     }
 }
 
@@ -105,7 +105,7 @@ def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] =
 //    function will be tested on a 6 x 6 board. 
 
 def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
-  if (path.length == dim * dim && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
+  if ((path.length == dim * dim) && (legal_moves(dim, List(path.last), path.last).contains(path.head))) Some(path)
   else first(ordered_moves(dim, path, path.head), x => first_closed_tour_heuristics(dim, x::path))
 }
 
