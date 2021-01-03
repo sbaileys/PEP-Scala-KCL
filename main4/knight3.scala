@@ -3,6 +3,7 @@
 
 object CW9c {
 
+import scala.annotation.tailrec
 // !!! Copy any function you need from file knight1.scala !!!
 // !!! or knight2.scala                                   !!! 
 //
