@@ -6,6 +6,7 @@ object CW7b {
 
 import io.Source
 import scala.util._
+import scala.annotation.tailrec
 
 // (1) Implement the function get_csv_url which takes an url-string
 //     as argument and requests the corresponding file. The two urls
@@ -71,8 +72,16 @@ def process_movies(lines: List[String]) : List[(String, String)] = {
 //     recursive fashion, using a Map m as accumulator. This Map m
 //     is set to Map() at the beginning of the calculation.
 
-def groupById(ratings: List[(String, String)], m: Map[String, List[String]]) : Map[String, List[String]] = 
-    ratings.groupBy(_._1).view.mapValues(_.map(_._2)).toMap
+@tailrec
+def groupById(ratings: List[(String, String)], m: Map[String, List[String]]) : Map[String, List[String]] = ratings match {
+    case Nil => m 
+    case x::xs => if (m.contains(x._1)) {
+        val old_value = m(x._1)
+        val new_map = m+(x._1 -> (List(x._2):::old_value))
+        groupById(xs, new_map)
+    }
+    else groupById(xs, m+(x._1 -> List(x._2)))
+}
 
 
 // testcases
