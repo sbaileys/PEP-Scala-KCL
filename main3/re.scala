@@ -17,6 +17,7 @@ case class STAR(r: Rexp) extends Rexp             // star
 
 import scala.language.implicitConversions    
 import scala.language.reflectiveCalls 
+import scala.annotation.tailrec
 
 def charlist2rexp(s: List[Char]): Rexp = s match {
   case Nil => ONE
@@ -45,7 +46,14 @@ implicit def stringOps (s: String) = new {
 // can match the empty string and Returns a boolean
 // accordingly.
 
-def nullable (r: Rexp) : Boolean = ???
+def nullable (r: Rexp) : Boolean = r match {
+  case ZERO => false
+	case ONE => true
+	case CHAR(c) => false
+	case ALT(r1,r2) => nullable(r1) || nullable(r2)
+	case SEQ(r1,r2)	=> nullable(r1) && nullable(r2)
+	case STAR(r) => true
+}
 
 
 // (2) Complete the function der according to
@@ -53,9 +61,16 @@ def nullable (r: Rexp) : Boolean = ???
 // function calculates the derivative of a 
 // regular expression w.r.t. a character.
 
-def der (c: Char, r: Rexp) : Rexp = ???
+def der (c: Char, r: Rexp) : Rexp = r match {
+  case ZERO => ZERO
+  case ONE => ZERO
+  case CHAR(d) => if (c == d) ONE else ZERO
+	case ALT(r1,r2) => ALT(der(c, r1), der(c, r2))
+	case SEQ(r1,r2)	=> if (nullable(r1)) ALT(SEQ(der(c, r1), r2), der(c, r2)) else SEQ(der(c, r1), r2)
+	case STAR(r) => SEQ(der(c, r), STAR(r))
+}
 
-
+/////////
 // (3) Complete the simp function according to
 // the specification given in the coursework; this
 // function simplifies a regular expression from
@@ -63,7 +78,28 @@ def der (c: Char, r: Rexp) : Rexp = ???
 // expressions; however it does not simplify inside 
 // STAR-regular expressions.
 
-def simp(r: Rexp) : Rexp = ???
+def simp(r: Rexp) : Rexp = r match {
+  case SEQ(r1, r2) => {
+    (simp(r1), simp(r2)) match {
+      case (r, ZERO) => ZERO
+      case (ZERO, r) => ZERO
+      case (r, ONE) => r
+      case (ONE, r) => r
+      case (r1, r2) => SEQ(r1, r2)
+      case _ => r
+      }
+    }
+  case ALT(r1, r2) => {
+    (simp(r1), simp(r2)) match {
+      case (r, ZERO) => r
+      case (ZERO, r) => r
+      case (r1, r2) => if( r1 == r2) simp(r1) else ALT(simp(r1), simp(r2))
+      case _ => r
+    }
+  }
+  case _ => r
+}
+ 
 
 
 // (4) Complete the two functions below; the first 
@@ -72,16 +108,29 @@ def simp(r: Rexp) : Rexp = ???
 // expression and a string and checks whether the
 // string matches the regular expression
 
-def ders (s: List[Char], r: Rexp) : Rexp = ???
+@tailrec
+def ders (s: List[Char], r: Rexp) : Rexp = s match {
+  case Nil => r
+  case x::xs => ders(xs, simp(der(x, r)))
+}
 
-def matcher(r: Rexp, s: String): Boolean = ???
+def matcher(r: Rexp, s: String): Boolean = 
+  nullable(ders(s.toList, r))
 
 
 // (5) Complete the size function for regular
 // expressions according to the specification 
 // given in the coursework.
 
-def size(r: Rexp): Int = ???
+def size(r: Rexp): Int = r match {
+  case ZERO => 1
+  case ONE => 1
+  case CHAR(r) => 1
+  case ALT(r1, r2) => 1 + size(r1) + size(r2)
+  case SEQ(r1, r2) => 1 + size(r1) + size(r2)
+  case STAR(r) => 1 + size(r)
+  case _ => size(r)
+}
 
 
 // some testing data
