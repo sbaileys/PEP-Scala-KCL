@@ -60,8 +60,8 @@ def jumpRight(prog: String, pc: Int, level: Int) : Int = {
 @tailrec
 def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
     if (pc < prog.length() && pc >= 0) prog(pc) match {
-        case '[' => jumpLeft(prog, pc-1, level+1)
-        case ']' => if (level == 0) pc-1 else jumpLeft(prog, pc-1, level-1)
+        case '[' => if (level == 0) pc+1 else jumpLeft(prog, pc-1, level-1)
+        case ']' => jumpLeft(prog, pc-1, level+1)
         case _ => jumpLeft(prog, pc-1, level)
     }
     else pc
@@ -115,7 +115,7 @@ def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
       else compute(prog, pc + 1, mp, mem)
     }
     case '*' => compute(prog, pc + 1, mp, write(mem, mp, mem(mp) * sread(mem, mp - 1)))
-    case '@' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp - 1)))
+    case '@' => compute(prog, pc + 1, mp, write(mem, sread(mem, mp), sread(mem, mp - 1)))
     case '#' => {
       print(sread(mem, mp).toInt)
       compute(prog, pc + 1, mp, mem)
@@ -126,7 +126,6 @@ def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
 
 def run(prog: String, m: Mem = Map()) = 
   compute(prog, 0, 0, m)
-
 
 
 // some sample bf/bf++-programs collected from the Internet
