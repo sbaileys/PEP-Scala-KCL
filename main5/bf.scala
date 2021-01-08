@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 // Core Part about an Interpreter for 
 // the Brainf***++ language
 //==============================================
@@ -20,7 +21,7 @@ import io.Source
 import scala.util._
 
 def load_bff(name: String) : String = 
-Try(Source.fromFile(s"${name}").getLines()).getOrElse(String())
+  Try(Source.fromFile(s"${name}").mkString).getOrElse("")
 
 
 // (2) Complete the functions for safely reading  
@@ -46,21 +47,22 @@ def write(mem: Mem, mp: Int, v: Int) : Mem =
 // until after the *matching* ]-command. Similarly, 
 // jumpLeft implements the move to the left to just after
 // the *matching* [-command.
-
+@tailrec
 def jumpRight(prog: String, pc: Int, level: Int) : Int = {
     if (pc < prog.length() && pc >= 0) prog(pc) match {
-        case "[" => jumpRight(prog, pc+1, level+1)
-        case "]" => if (level = 0) pc+1 else jumpRight(prog, pc+1, level-1)
+        case '[' => jumpRight(prog, pc+1, level+1)
+        case ']' => if (level == 0) pc+1 else jumpRight(prog, pc+1, level-1)
         case _ => jumpRight(prog, pc+1, level)
     }
     else pc
 }
 
+@tailrec
 def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
     if (pc < prog.length() && pc >= 0) prog(pc) match {
-        case "[" => jumpRight(prog, pc-1, level+1)
-        case "]" => if (level = 0) pc-1 else jumpRight(prog, pc-1, level-1)
-        case _ => jumpRight(prog, pc-1, level)
+        case '[' => jumpLeft(prog, pc-1, level+1)
+        case ']' => if (level == 0) pc-1 else jumpLeft(prog, pc-1, level-1)
+        case _ => jumpLeft(prog, pc-1, level)
     }
     else pc
 }
@@ -91,7 +93,7 @@ def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
 // Implement the run function that calls compute with the program
 // counter and memory counter set to 0.
 
-
+@tailrec
 def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
   if(pc > prog.length - 1 || pc < 0) mem
   //try omit <0 or write pc >=pg length
@@ -100,24 +102,30 @@ def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
     case '<' => compute(prog, pc + 1, mp - 1, mem)
     case '+' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) + 1))
     case '-' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) - 1))
-    case '.' => compute(prog, pc + 1, mp, mem)
-                print(sread(mem, mp).toChar)
-    case '[' => 
+    case '.' => {
+      print(sread(mem, mp).toChar)
+      compute(prog, pc + 1, mp, mem)
+    }
+    case '[' => {
       if(sread(mem, mp) == 0) compute(prog, jumpRight(prog, pc + 1, 0), mp, mem)
       else compute(prog, pc + 1, mp, mem) 
-    case ']' =>
-      if(sread(mem, mp) != 0) run(prog, jumpLeft(prog, pc - 1, 0), mp, mem)
+    }
+    case ']' => {
+      if(sread(mem, mp) != 0) compute(prog, jumpLeft(prog, pc - 1, 0), mp, mem)
       else compute(prog, pc + 1, mp, mem)
-    case '*' => compute(prog, pc + 1, mp, write(mem, mp, mem(mp, mp) * sread(mem, mp - 1)))
+    }
+    case '*' => compute(prog, pc + 1, mp, write(mem, mp, mem(mp) * sread(mem, mp - 1)))
     case '@' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp - 1)))
-    case '.' => compute(prog, pc + 1, mp, mem)
-                print(sread(mem, mp).toInt)
+    case '#' => {
+      print(sread(mem, mp).toInt)
+      compute(prog, pc + 1, mp, mem)
+    }
     case _ => compute(prog, pc + 1, mp, mem)
   }
 }
 
 def run(prog: String, m: Mem = Map()) = 
-  compute(prog, pc, mp, mem)
+  compute(prog, 0, 0, m)
 
 
 
