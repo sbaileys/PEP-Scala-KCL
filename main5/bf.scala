@@ -19,8 +19,8 @@ type Mem = Map[Int, Int]
 import io.Source
 import scala.util._
 
-def load_bff(name: String) : String = ???
-
+def load_bff(name: String) : String = 
+Try(Source.fromFile(s"${name}").getLines()).getOrElse(String())
 
 
 // (2) Complete the functions for safely reading  
@@ -32,9 +32,11 @@ def load_bff(name: String) : String = ???
 // value v is stored.
 
 
-def sread(mem: Mem, mp: Int) : Int = ???
+def sread(mem: Mem, mp: Int) : Int = 
+    mem.get(mp).getOrElse(0)
 
-def write(mem: Mem, mp: Int, v: Int) : Mem = ???
+def write(mem: Mem, mp: Int, v: Int) : Mem = 
+    mem + (mp -> v)
 
 
 
@@ -45,9 +47,23 @@ def write(mem: Mem, mp: Int, v: Int) : Mem = ???
 // jumpLeft implements the move to the left to just after
 // the *matching* [-command.
 
-def jumpRight(prog: String, pc: Int, level: Int) : Int = ???
+def jumpRight(prog: String, pc: Int, level: Int) : Int = {
+    if (pc < prog.length() && pc >= 0) prog(pc) match {
+        case "[" => jumpRight(prog, pc+1, level+1)
+        case "]" => if (level = 0) pc+1 else jumpRight(prog, pc+1, level-1)
+        case _ => jumpRight(prog, pc+1, level)
+    }
+    else pc
+}
 
-def jumpLeft(prog: String, pc: Int, level: Int) : Int = ???
+def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
+    if (pc < prog.length() && pc >= 0) prog(pc) match {
+        case "[" => jumpRight(prog, pc-1, level+1)
+        case "]" => if (level = 0) pc-1 else jumpRight(prog, pc-1, level-1)
+        case _ => jumpRight(prog, pc-1, level)
+    }
+    else pc
+}
 
 
 // testcases
@@ -76,9 +92,32 @@ def jumpLeft(prog: String, pc: Int, level: Int) : Int = ???
 // counter and memory counter set to 0.
 
 
-def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = ???
+def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
+  if(pc > prog.length - 1 || pc < 0) mem
+  //try omit <0 or write pc >=pg length
+  else prog(pc) match {
+    case '>' => compute(prog, pc + 1, mp + 1, mem)
+    case '<' => compute(prog, pc + 1, mp - 1, mem)
+    case '+' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) + 1))
+    case '-' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp) - 1))
+    case '.' => compute(prog, pc + 1, mp, mem)
+                print(sread(mem, mp).toChar)
+    case '[' => 
+      if(sread(mem, mp) == 0) compute(prog, jumpRight(prog, pc + 1, 0), mp, mem)
+      else compute(prog, pc + 1, mp, mem) 
+    case ']' =>
+      if(sread(mem, mp) != 0) run(prog, jumpLeft(prog, pc - 1, 0), mp, mem)
+      else compute(prog, pc + 1, mp, mem)
+    case '*' => compute(prog, pc + 1, mp, write(mem, mp, mem(mp, mp) * sread(mem, mp - 1)))
+    case '@' => compute(prog, pc + 1, mp, write(mem, mp, sread(mem, mp - 1)))
+    case '.' => compute(prog, pc + 1, mp, mem)
+                print(sread(mem, mp).toInt)
+    case _ => compute(prog, pc + 1, mp, mem)
+  }
+}
 
-def run(prog: String, m: Mem = Map()) = ???
+def run(prog: String, m: Mem = Map()) = 
+  compute(prog, pc, mp, mem)
 
 
 
