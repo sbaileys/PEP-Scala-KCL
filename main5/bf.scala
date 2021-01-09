@@ -96,7 +96,6 @@ def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
 @tailrec
 def compute(prog: String, pc: Int, mp: Int, mem: Mem) : Mem = {
   if(pc > prog.length - 1 || pc < 0) mem
-  //try omit <0 or write pc >=pg length
   else prog(pc) match {
     case '>' => compute(prog, pc + 1, mp + 1, mem)
     case '<' => compute(prog, pc + 1, mp - 1, mem)

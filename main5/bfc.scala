@@ -33,6 +33,40 @@ type Mem = Map[Int, Int]
 
 import io.Source
 import scala.util._
+import scala.annotation.tailrec
+
+def load_bff(name: String) : String = 
+  Try(Source.fromFile(s"${name}").mkString).getOrElse("")
+
+
+// (2) Complete the functions for safely reading  
+// and writing brainf***++ memory. 
+
+def sread(mem: Mem, mp: Int) : Int = 
+    mem.get(mp).getOrElse(0)
+
+def write(mem: Mem, mp: Int, v: Int) : Mem = 
+    mem + (mp -> v)
+
+@tailrec
+def jumpRight(prog: String, pc: Int, level: Int) : Int = {
+    if (pc < prog.length() && pc >= 0) prog(pc) match {
+        case '[' => jumpRight(prog, pc+1, level+1)
+        case ']' => if (level == 0) pc+1 else jumpRight(prog, pc+1, level-1)
+        case _ => jumpRight(prog, pc+1, level)
+    }
+    else pc
+}
+
+@tailrec
+def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
+    if (pc < prog.length() && pc >= 0) prog(pc) match {
+        case '[' => if (level == 0) pc+1 else jumpLeft(prog, pc-1, level-1)
+        case ']' => jumpLeft(prog, pc-1, level+1)
+        case _ => jumpLeft(prog, pc-1, level)
+    }
+    else pc
+}
 
 
 // TASKS
@@ -67,18 +101,49 @@ import scala.util._
 //     This means whenever jumpLeft and jumpRight was called previously,
 //     you should immediately look up the jump address in the jtable.
  
-
-def jtable(pg: String) : Map[Int, Int] = ???
-
+def jtable(pg: String) : Map[Int, Int] = {
+  val mapRight = (for (i <- 0 until pg.length if pg.charAt(i)== '[') yield (i, jumpRight(pg, i+1, 0))).toMap
+  val mapLeft = (for (i <- 0 until pg.length if pg.charAt(i)== ']') yield (i, jumpLeft(pg, i-1, 0))).toMap
+  mapRight++mapLeft
+}
 
 // testcase
 //
 // jtable("""+++++[->++++++++++<]>--<+++[->>++++++++++<<]>>++<<----------[+>.>.<+<]""")
 // =>  Map(69 -> 61, 5 -> 20, 60 -> 70, 27 -> 44, 43 -> 28, 19 -> 6)
 
+@tailrec
+def compute2(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = {
+  if(pc > pg.length - 1 || pc < 0) mem
+  else pg(pc) match {
+    case '>' => compute2(pg, tb, pc + 1, mp + 1, mem)
+    case '<' => compute2(pg, tb, pc + 1, mp - 1, mem)
+    case '+' => compute2(pg, tb, pc + 1, mp, write(mem, mp, sread(mem, mp) + 1))
+    case '-' => compute2(pg, tb, pc + 1, mp, write(mem, mp, sread(mem, mp) - 1))
+    case '.' => {
+      print(sread(mem, mp).toChar)
+      compute2(pg, tb, pc + 1, mp, mem)
+    }
+    case '[' => {
+      if(sread(mem, mp) == 0) compute2(pg, tb, tb(pc), mp, mem)
+      else compute2(pg, tb, pc + 1, mp, mem) 
+    }
+    case ']' => {
+      if(sread(mem, mp) != 0) compute2(pg, tb, tb(pc), mp, mem)
+      else compute2(pg, tb, pc + 1, mp, mem)
+    }
+    case '*' => compute2(pg, tb, pc + 1, mp, write(mem, mp, mem(mp) * sread(mem, mp - 1)))
+    case '@' => compute2(pg, tb, pc + 1, mp, write(mem, sread(mem, mp), sread(mem, mp - 1)))
+    case '#' => {
+      print(sread(mem, mp).toInt)
+      compute2(pg, tb, pc + 1, mp, mem)
+    }
+    case _ => compute2(pg, tb, pc + 1, mp, mem)
+  }
+}
 
-def compute2(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = ???
-def run2(pg: String, m: Mem = Map()) = ???
+def run2(pg: String, m: Mem = Map()) = 
+  compute2(pg, jtable(pg), 0, 0, m)
 
 
 // testcases
@@ -101,11 +166,46 @@ def run2(pg: String, m: Mem = Map()) = ???
 // by using the Scala method .replaceAll you can replace it with the 
 // string "0" standing for the new bf-command.
 
-def optimise(s: String) : String = ???
+def optimise(s: String) : String = 
+  s.replaceAll("""[^<>+-.,\[\]]""", "").replaceAll("""\[-\]""", "0")
 
-def compute3(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = ???
+@tailrec
+def compute3(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = {
+  if(pc > pg.length - 1 || pc < 0) mem
+  else pg(pc) match {
+    case '>' => compute3(pg, tb, pc + 1, mp + 1, mem)
+    case '<' => compute3(pg, tb, pc + 1, mp - 1, mem)
+    case '+' => compute3(pg, tb, pc + 1, mp, write(mem, mp, sread(mem, mp) + 1))
+    case '-' => compute3(pg, tb, pc + 1, mp, write(mem, mp, sread(mem, mp) - 1))
+    case '.' => {
+      print(sread(mem, mp).toChar)
+      compute3(pg, tb, pc + 1, mp, mem)
+    }
+    case '[' => {
+      if(sread(mem, mp) == 0) compute3(pg, tb, tb(pc), mp, mem)
+      else compute3(pg, tb, pc + 1, mp, mem) 
+    }
+    case ']' => {
+      if(sread(mem, mp) != 0) compute3(pg, tb, tb(pc), mp, mem)
+      else compute3(pg, tb, pc + 1, mp, mem)
+    }
+    case '*' => compute3(pg, tb, pc + 1, mp, write(mem, mp, mem(mp) * sread(mem, mp - 1)))
+    case '@' => compute3(pg, tb, pc + 1, mp, write(mem, sread(mem, mp), sread(mem, mp - 1)))
+    case '#' => {
+      print(sread(mem, mp).toInt)
+      compute3(pg, tb, pc + 1, mp, mem)
+    }
+    case '0' => {
+      write(mem, mp, 0)
+      compute3(pg, tb, pc + 1, mp, mem)
+    }
+    case _ => compute3(pg, tb, pc + 1, mp, mem)
+  }
+}
 
-def run3(pg: String, m: Mem = Map()) = ???
+
+def run3(pg: String, m: Mem = Map()) = 
+  compute3(optimise(pg), jtable(pg), 0, 0, m)
 
 
 // testcases
@@ -150,7 +250,8 @@ def compute4(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = 
 
 // should call first optimise and then combine on the input string
 //
-def run4(pg: String, m: Mem = Map()) = ???
+def run4(pg: String, m: Mem = Map()) = 
+  compute4(optimise(pg), jtable(pg), 0, 0, m)
 
 
 // testcases
