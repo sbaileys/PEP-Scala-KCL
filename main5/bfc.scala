@@ -149,6 +149,7 @@ def run2(pg: String, m: Mem = Map()) =
 // testcases
 // time_needed(1, run2(load_bff("benchmark.bf")))
 // time_needed(1, run2(load_bff("sierpinski.bf")))
+// time_needed(1, run2(load_bff("mandelbrot.bf")))
 
 
 
@@ -196,8 +197,7 @@ def compute3(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = 
       compute3(pg, tb, pc + 1, mp, mem)
     }
     case '0' => {
-      write(mem, mp, 0)
-      compute3(pg, tb, pc + 1, mp, mem)
+      compute3(pg, tb, pc + 1, mp, write(mem, mp, 0))
     }
     case _ => compute3(pg, tb, pc + 1, mp, mem)
   }
@@ -205,8 +205,7 @@ def compute3(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = 
 
 
 def run3(pg: String, m: Mem = Map()) = 
-  compute3(optimise(pg), jtable(pg), 0, 0, m)
-
+  compute3(optimise(pg), jtable(optimise(pg)), 0, 0, m)
 
 // testcases
 //
@@ -214,6 +213,10 @@ def run3(pg: String, m: Mem = Map()) =
 // optimise(load_bff("mandelbrot.bf")).length  // => 11205
 // 
 // time_needed(1, run3(load_bff("benchmark.bf")))
+
+//time_needed(1, run3(load_bff("benchmark.bf")))
+// time_needed(1, run3(load_bff("sierpinski.bf"))) 
+// time_needed(1, run3(load_bff("mandelbrot.bf")))
 
 
 
@@ -238,27 +241,86 @@ def run3(pg: String, m: Mem = Map()) =
 //  Adapt the compute4 and run4 functions such that they can deal
 //  appropriately with such two-character commands.
 
+val alphabetMap = Map(1 -> "A", 2 -> "B", 3 -> "C", 4 -> "D", 5 -> "E", 6 -> "F", 7 -> "G", 8 -> "H",
+  9 -> "I", 10 -> "J", 11 -> "K", 12 -> "L", 13 -> "M", 14 -> "N", 15 -> "O", 16 -> "P", 17 -> "Q", 18 -> "R",
+  19 -> "S", 20 -> "T", 21 -> "U", 22 -> "V", 23 -> "W", 24 -> "X", 25 -> "Y", 26 -> "Z")
 
-def combine(s: String) : String = ???
+val incrementMap = (for ((k,v) <- alphabetMap) yield (v,k)).toMap
+
+def splitString(s: String) : List[String] = 
+  s.split("(?<=(.))(?!\\1)").toList 
+
+def processSubstring(s: String): String = {
+  val slength = s.length
+  if (slength <= 26) s"${s.head}${alphabetMap(slength)}"
+  else {
+    val loops = slength/26
+    val modul = slength%26
+    if (modul == 0) (s"${s.head}Z"*loops) else (s"${s.head}Z"*loops)+s"${s.head}${alphabetMap(modul)}"
+  }
+}
+
+def combine(s: String) : String = {
+  val splitList = splitString(s)
+  (for (substring <- splitList) yield { 
+    if (substring.head.toString.matches("[+\\-><]")) processSubstring(substring)
+    else substring
+  }).mkString 
+}
 
 // testcase
+// combine(optimise(load_bff("benchmark.bf"))).length == 134
+// combine(optimise(load_bff("mandelbrot.bf"))).length == 6511
 // combine(load_bff("benchmark.bf"))
 
-
-def compute4(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = ???
-
+@tailrec
+def compute4(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = {
+  if(pc > pg.length - 1 || pc < 0) mem
+  else {
+    pg(pc) match {
+    case '>' => compute4(pg, tb, pc + 2, mp + incrementMap(pg(pc+1).toString), mem)
+    case '<' => compute4(pg, tb, pc + 2, mp - incrementMap(pg(pc+1).toString), mem)
+    case '+' => compute4(pg, tb, pc + 2, mp, write(mem, mp, sread(mem, mp) + incrementMap(pg(pc+1).toString)))
+    case '-' => compute4(pg, tb, pc + 2, mp, write(mem, mp, sread(mem, mp) - incrementMap(pg(pc+1).toString)))
+    case '.' => {
+      print(sread(mem, mp).toChar)
+      compute4(pg, tb, pc + 1, mp, mem)
+    }
+    case '[' => {
+      if(sread(mem, mp) == 0) compute4(pg, tb, tb(pc), mp, mem)
+      else compute4(pg, tb, pc + 1, mp, mem) 
+    }
+    case ']' => {
+      if(sread(mem, mp) != 0) compute4(pg, tb, tb(pc), mp, mem)
+      else compute4(pg, tb, pc + 1, mp, mem)
+    }
+    case '*' => compute4(pg, tb, pc + 1, mp, write(mem, mp, mem(mp) * sread(mem, mp - 1)))
+    case '@' => compute4(pg, tb, pc + 1, mp, write(mem, sread(mem, mp), sread(mem, mp - 1)))
+    case '#' => {
+      print(sread(mem, mp).toInt)
+      compute4(pg, tb, pc + 1, mp, mem)
+    }
+    case '0' => {
+      compute4(pg, tb, pc + 1, mp, write(mem, mp, 0))
+    }
+    case _ => compute4(pg, tb, pc + 1, mp, mem)
+  }
+}
+}
 
 // should call first optimise and then combine on the input string
 //
-def run4(pg: String, m: Mem = Map()) = 
-  compute4(optimise(pg), jtable(pg), 0, 0, m)
-
+def run4(pg: String, m: Mem = Map()) = {
+  val better = combine(optimise(pg))
+  compute4(better, jtable(better), 0, 0, m)
+}
 
 // testcases
-// combine(optimise(load_bff("benchmark.bf"))) // => """>A+B[<A+M>A-A]<A[[....."""
+// combine(optimise(load_bff("mandelbrot.bf"))) // => """>A+B[<A+M>A-A]<A[[....."""
 
 // testcases (they should now run much faster)
 // time_needed(1, run4(load_bff("benchmark.bf")))
+//time_needed(1, run2(load_bff("benchmark.bf")))
 // time_needed(1, run4(load_bff("sierpinski.bf"))) 
 // time_needed(1, run4(load_bff("mandelbrot.bf")))
 
