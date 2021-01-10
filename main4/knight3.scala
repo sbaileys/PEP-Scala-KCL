@@ -35,6 +35,8 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
 //    moves like in (2) but orders them according to Warnsdorf’s 
 //    rule. That means moves with the fewest legal onward moves 
 //    should come first.
+//
+
 def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] = 
     legal_moves(dim, path, x).sortBy(legal_moves(dim,path,_).length)
 

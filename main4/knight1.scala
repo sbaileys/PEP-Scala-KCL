@@ -75,6 +75,7 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 // def foo(x: (Int, Int)) = if (x._1 > 3) Some(List(x)) else None
 // first(List((1, 0),(2, 0),(3, 0),(4, 0)), foo)   // Some(List((4,0)))
 // first(List((1, 0),(2, 0),(3, 0)), foo)          // None
+//
 
 
 //(5) Implement a function that uses the first-function from (5) for

@@ -82,6 +82,7 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 //(5) Implement a function that uses the first-function from (5) for
 //    trying out onward moves, and searches recursively for a
 //    knight tour on a dim * dim-board.
+//
 
 def first_tour(dim: Int, path: Path) : Option[Path] = {
     if (path.size == dim * dim) Some(path)
