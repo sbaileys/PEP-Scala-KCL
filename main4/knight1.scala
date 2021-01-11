@@ -1,12 +1,14 @@
 // Preliminary Part about finding Knight's tours
 //===============================================
-import scala.annotation.tailrec
+
 object CW9a {
 //comment
 // If you need any auxiliary function, feel free to 
 // implement it, but do not make any changes to the
 // templates below. Also have a look whether the functions
 // at the end are of any help.
+
+import scala.annotation.tailrec
 
 type Pos = (Int, Int)    // a position on a chessboard 
 type Path = List[Pos]    // a path...a list of positions
@@ -75,7 +77,7 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 // def foo(x: (Int, Int)) = if (x._1 > 3) Some(List(x)) else None
 // first(List((1, 0),(2, 0),(3, 0),(4, 0)), foo)   // Some(List((4,0)))
 // first(List((1, 0),(2, 0),(3, 0)), foo)          // None
-//
+
 
 
 //(5) Implement a function that uses the first-function from (5) for

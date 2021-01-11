@@ -1,4 +1,4 @@
-import scala.annotation.tailrec
+
 // Core Part about finding a single tour for a board using the
 // Warnsdorf Rule
 //==============================================================
@@ -10,6 +10,8 @@ object CW9b {
 // If you need any auxiliary function, feel free to 
 // implement it, but do not make any changes to the
 // templates below.
+
+import scala.annotation.tailrec
 
 type Pos = (Int, Int)    // a position on a chessboard 
 type Path = List[Pos]    // a path...a list of positions
@@ -28,15 +30,6 @@ def legal_moves(dim: Int, path: Path, x: Pos) : List[Pos] = {
   val allMoves = List((x._1 + 1, x._2 + 2), (x._1 + 2, x._2 + 1), (x._1 + 2, x._2 - 1), (x._1 + 1, x._2 - 2), (x._1 - 1, x._2 - 2), (x._1 - 2, x._2 - 1), (x._1 - 2, x._2 + 1), (x._1 - 1, x._2 + 2))
   allMoves.filter(x => is_legal(dim, path, x))
 }
-
-//some testcases
-// assert(legal_moves(8, Nil, (2,2)) == 
-//  List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4)))
-// assert(legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
-// assert(legal_moves(8, List((4,1), (1,0)), (2,2)) == 
-//  List((3,4), (4,3), (3,0), (0,1), (0,3), (1,4)))
-// assert(legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6)))
-
 
 //(3) Complete the two recursive functions below. 
 //    They exhaustively search for knight's tours starting from the 
@@ -72,12 +65,6 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
       if (position.isDefined) position else first(xs, f)
     }
 }
-
-// testcases
-// def foo(x: (Int, Int)) = if (x._1 > 3) Some(List(x)) else None
-// first(List((1, 0),(2, 0),(3, 0),(4, 0)), foo)   // Some(List((4,0)))
-// first(List((1, 0),(2, 0),(3, 0)), foo)          // None
-
 
 //(5) Implement a function that uses the first-function from (5) for
 //    trying out onward moves, and searches recursively for a
@@ -115,15 +102,16 @@ def first_closed_tour_heuristics(dim: Int, path: Path) : Option[Path] = {
 //    version of the function will be called with dimensions of 
 //    up to 30 * 30.
 
-def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
-  recursive_heuritics(dim, path, path::List())
-
 @tailrec
 def recursive_heuritics(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
   case Nil => None
   case x::xs => if (x.length == dim * dim) Some(x) 
   else recursive_heuritics(dim, path, ordered_moves(dim, x, x.head).map(_::x))
 }
+
+def first_tour_heuristics(dim: Int, path: Path) : Option[Path] = 
+  recursive_heuritics(dim, path, path::List())
+
 
 //Helper functions
 

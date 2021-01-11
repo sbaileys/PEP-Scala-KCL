@@ -1,9 +1,7 @@
 // Core Part about a "Compiler" for the Brainf*** language
 //======================================================
 
-
 object CW10b {
-
 
 // !!! Copy any function you need from file bf.scala !!!
 //
@@ -203,7 +201,6 @@ def compute3(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = 
   }
 }
 
-
 def run3(pg: String, m: Mem = Map()) = 
   compute3(optimise(pg), jtable(optimise(pg)), 0, 0, m)
 
@@ -213,11 +210,8 @@ def run3(pg: String, m: Mem = Map()) =
 // optimise(load_bff("mandelbrot.bf")).length  // => 11205
 // 
 // time_needed(1, run3(load_bff("benchmark.bf")))
-
-//time_needed(1, run3(load_bff("benchmark.bf")))
 // time_needed(1, run3(load_bff("sierpinski.bf"))) 
 // time_needed(1, run3(load_bff("mandelbrot.bf")))
-
 
 
 // (7)  Write a function combine which replaces sequences
@@ -309,7 +303,7 @@ def compute4(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = 
 }
 
 // should call first optimise and then combine on the input string
-//
+
 def run4(pg: String, m: Mem = Map()) = {
   val better = combine(optimise(pg))
   compute4(better, jtable(better), 0, 0, m)
@@ -317,12 +311,9 @@ def run4(pg: String, m: Mem = Map()) = {
 
 // testcases
 // combine(optimise(load_bff("mandelbrot.bf"))) // => """>A+B[<A+M>A-A]<A[[....."""
-
 // testcases (they should now run much faster)
 // time_needed(1, run4(load_bff("benchmark.bf")))
-//time_needed(1, run2(load_bff("benchmark.bf")))
 // time_needed(1, run4(load_bff("sierpinski.bf"))) 
 // time_needed(1, run4(load_bff("mandelbrot.bf")))
-
 
 }

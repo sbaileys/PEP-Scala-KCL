@@ -96,6 +96,6 @@ def investment(portfolio: List[String], years: Range, start_balance: Long) : Lon
 
 //println("Real data: " + investment(rstate_portfolio, 1978 to 2019, 100))
 //println("Blue data: " + investment(blchip_portfolio, 1978 to 2019, 100))
-
+//comment for tests
 
 }

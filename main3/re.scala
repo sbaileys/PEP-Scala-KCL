@@ -70,7 +70,6 @@ def der (c: Char, r: Rexp) : Rexp = r match {
 	case STAR(r) => SEQ(der(c, r), STAR(r))
 }
 
-/////////
 // (3) Complete the simp function according to
 // the specification given in the coursework; this
 // function simplifies a regular expression from
@@ -100,7 +99,6 @@ def simp(r: Rexp) : Rexp = r match {
   case _ => r
 }
  
-
 
 // (4) Complete the two functions below; the first 
 // calculates the derivative w.r.t. a string; the second
@@ -181,6 +179,7 @@ simp(Iterator.iterate(ONE:Rexp)(r => SEQ(r, ONE | ONE)).drop(50).next) == ONE
 //
 //    where SEQ is nested 50 times.
 
+//comment for tests
 */
 
 }

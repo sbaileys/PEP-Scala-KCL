@@ -3,7 +3,6 @@
 
 object CW9c {
 
-import scala.annotation.tailrec
 // !!! Copy any function you need from file knight1.scala !!!
 // !!! or knight2.scala                                   !!! 
 //
@@ -11,6 +10,7 @@ import scala.annotation.tailrec
 // implement it, but do not make any changes to the
 // templates below.
 
+import scala.annotation.tailrec
 
 type Pos = (Int, Int)    // a position on a chessboard 
 type Path = List[Pos]    // a path...a list of positions
@@ -46,14 +46,14 @@ def ordered_moves(dim: Int, path: Path, x: Pos) : List[Pos] =
 //    and starting field (0, 0). It has to produce a solution within
 //    30 seconds.
 
-def tour_on_mega_board(dim: Int, path: Path) : Option[Path] =
-    recursive_mega(dim, path, path::List())
-
 @tailrec
 def recursive_mega(dim: Int, path: Path, accumulator: List[Path]) : Option[Path] = accumulator match {
   case Nil => None
   case x::xs => if (x.length == dim * dim) Some(x) 
   else recursive_mega(dim, path, ordered_moves(dim, x, x.head).map(_::x))
 }
+
+def tour_on_mega_board(dim: Int, path: Path) : Option[Path] =
+    recursive_mega(dim, path, path::List())
 
 }

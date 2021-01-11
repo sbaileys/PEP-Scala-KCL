@@ -1,4 +1,4 @@
-import scala.annotation.tailrec
+
 // Core Part about an Interpreter for 
 // the Brainf***++ language
 //==============================================
@@ -8,6 +8,7 @@ object CW10a {
 
 
 // representation of Bf memory 
+
 
 type Mem = Map[Int, Int]
 
@@ -19,6 +20,7 @@ type Mem = Map[Int, Int]
 
 import io.Source
 import scala.util._
+import scala.annotation.tailrec
 
 def load_bff(name: String) : String = 
   Try(Source.fromFile(s"${name}").mkString).getOrElse("")
@@ -32,13 +34,11 @@ def load_bff(name: String) : String =
 // same data, except at the given memory pointer the
 // value v is stored.
 
-
 def sread(mem: Mem, mp: Int) : Int = 
     mem.get(mp).getOrElse(0)
 
 def write(mem: Mem, mp: Int, v: Int) : Mem = 
     mem + (mp -> v)
-
 
 
 // (3) Implement the two jumping instructions in the 
@@ -130,7 +130,6 @@ def run(prog: String, m: Mem = Map()) =
 // some sample bf/bf++-programs collected from the Internet
 //==========================================================
 
-
 // some contrived (small) programs
 //---------------------------------
 
@@ -162,15 +161,15 @@ def run(prog: String, m: Mem = Map()) =
 //-----------------------------
 
 // hello world program 1
-//run("""++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++
+// run("""++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++
 //       ..+++.>>.<-.<.+++.------.--------.>>+.>++.""")
 
 // hello world program 2
-//run("""++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>+
+// run("""++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>+
 //       +.<<+++++++++++++++.>.+++.------.--------.>+.>.""")
 
 // hello world program 3
-//run("""+++++++++[>++++++++>+++++++++++>+++++<<<-]>.>++.+++++++..
+// run("""+++++++++[>++++++++>+++++++++++>+++++<<<-]>.>++.+++++++..
 //       +++.>-.------------.<++++++++.--------.+++.------.--------.>+.""")
 
  
@@ -179,7 +178,7 @@ def run(prog: String, m: Mem = Map()) =
 
 
 //fibonacci numbers below 100
-//run("""+++++++++++
+// run("""+++++++++++
 //      >+>>>>++++++++++++++++++++++++++++++++++++++++++++
 //      >++++++++++++++++++++++++++++++++<<<<<<[>[>>>>>>+>
 //      +<<<<<<<-]>>>>>>>[<<<<<<<+>>>>>>>-]<[>++++++++++[-
@@ -192,14 +191,14 @@ def run(prog: String, m: Mem = Map()) =
 //      [-]]<<[>>+>+<<<-]>>>[<<<+>>>-]<<[<+>-]>[<+>-]<<<-]""")
 
 //outputs the square numbers up to 10000
-//run("""++++[>+++++<-]>[<+++++>-]+<+[>[>+>+<<-]++>>[<<+>>-]>>>[-]++>[-]+
+// run("""++++[>+++++<-]>[<+++++>-]+<+[>[>+>+<<-]++>>[<<+>>-]>>>[-]++>[-]+
 //       >>>+[[-]++++++>>>]<<<[[<++++++++<++>>-]+<.<[>----<-]<]
 //       <<[>>>>>[>>>[-]+++++++++<[>-<-]+++++++++>[-[<->-]+[<<<]]<[>+<-]>]<<-]<<-]""")
 
 
 // calculates 2 to the power of 6 
 //(example from a C-to-BF compiler at https://github.com/elikaski/BF-it)
-//run(""">>[-]>[-]++>[-]++++++><<<>>>>[-]+><>[-]<<[-]>[>+<<+>-]>[<+>-]
+// run(""">>[-]>[-]++>[-]++++++><<<>>>>[-]+><>[-]<<[-]>[>+<<+>-]>[<+>-]
 //       <><[-]>[-]<<<[>>+>+<<<-]>>>[<<<+>>>-][-]><<>>[-]>[-]<<<[>>[-]
 //       <[>+>+<<-]>[<+>-]+>[[-]<-<->>]<<<-]>>[<<+>>-]<<[[-]>[-]<<[>+>
 //       +<<-]>>[<<+>>-][-]>[-]<<<<<[>>>>+>+<<<<<-]>>>>>[<<<<<+>>>>>-]

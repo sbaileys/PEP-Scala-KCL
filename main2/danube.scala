@@ -60,11 +60,11 @@ def process_movies(lines: List[String]) : List[(String, String)] = {
 
 // testcases
 //-----------
-//val good_ratings = process_ratings(ratings)
-//val movie_names = process_movies(movies)
+// val good_ratings = process_ratings(ratings)
+// val movie_names = process_movies(movies)
 
-//good_ratings.length   //48580
-//movie_names.length    // 9742
+// good_ratings.length   //48580
+// movie_names.length    // 9742
 
 
 // (3) Implement a grouping function that calculates a Map
@@ -87,16 +87,16 @@ def groupById(ratings: List[(String, String)], m: Map[String, List[String]]) : M
 
 // testcases
 //-----------
-//val ratings_map = groupById(good_ratings, Map())
-//val movies_map = movie_names.toMap
+// val ratings_map = groupById(good_ratings, Map())
+// val movies_map = movie_names.toMap
 
-//ratings_map.get("414").get.map(movies_map.get(_)).length 
+// ratings_map.get("414").get.map(movies_map.get(_)).length 
 //    => most prolific recommender with 1227 positive ratings
 
-//ratings_map.get("474").get.map(movies_map.get(_)).length 
+// ratings_map.get("474").get.map(movies_map.get(_)).length 
 //    => second-most prolific recommender with 787 positive ratings
 
-//ratings_map.get("214").get.map(movies_map.get(_)).length 
+// ratings_map.get("214").get.map(movies_map.get(_)).length 
 //    => least prolific recommender with only 1 positive rating
 
 
@@ -115,8 +115,8 @@ def favourites(m: Map[String, List[String]], mov: String) : List[List[String]] =
 // movie ID "912" -> Casablanca (1942)
 //          "858" -> Godfather
 //          "260" -> Star Wars: Episode IV - A New Hope (1977)
+// favourites(ratings_map, "912").length  // => 80
 
-//favourites(ratings_map, "912").length  // => 80
 
 // That means there are 80 users that recommend the movie with ID 912.
 // Of these 80  users, 55 gave a good rating to movie 858 and
@@ -138,7 +138,6 @@ def suggestions(recs: Map[String, List[String]],
     val sorted = sortedRecs(recs_list)
     ((for (i <- sorted) yield i._1).toList)
                 }
-
 
 // testcases
 //-----------
@@ -182,7 +181,6 @@ def recommendations(recs: Map[String, List[String]],
 //   => Nil  (there are three ratings for this movie in ratings.csv but they are not positive)     
 
 
-
 // (7) Calculate the recommendations for all movies according to
 // what the recommendations function in (6) produces (this
 // can take a few seconds). Put all recommendations into a list 
@@ -200,7 +198,6 @@ def most_recommended(recs: Map[String, List[String]],
     sortedRecs(recs_list)
                      }
 
-
 // testcase
 //
 //most_recommended(ratings_map, movies_map).take(3)
@@ -208,7 +205,7 @@ def most_recommended(recs: Map[String, List[String]],
 // List((Matrix,698), 
 //      (Star Wars: Episode IV - A New Hope (1977),402), 
 //      (Jerry Maguire (1996),382))
-
+//comment for tests
 
 
 }
