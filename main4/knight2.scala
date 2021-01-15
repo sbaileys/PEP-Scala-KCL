@@ -75,8 +75,8 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
     if (path.size == dim * dim) Some(path)
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
 }
-// is first_tour(6, List((0, 0))) ok?
-// is first_tour(4, List((0, 0))) == None
+// first_tour(6, List((0, 0))) ok?
+// first_tour(4, List((0, 0))) == None
 
 //(6) Complete the function that calculates a list of onward
 //    moves like in (2) but orders them according to Warnsdorf’s 

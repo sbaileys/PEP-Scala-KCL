@@ -134,22 +134,22 @@ def size(r: Rexp): Int = r match {
 // some testing data
 
 /*
-matcher(("a" ~ "b") ~ "c", "abc")  // => true
-matcher(("a" ~ "b") ~ "c", "ab")   // => false
+matcher(("a" ~ "b") ~ "c", "abc") == true
+matcher(("a" ~ "b") ~ "c", "ab") == false
 
 // the supposedly 'evil' regular expression (a*)* b
 val EVIL = SEQ(STAR(STAR(CHAR('a'))), CHAR('b'))
 
-matcher(EVIL, "a" * 1000 ++ "b")   // => true
-matcher(EVIL, "a" * 1000)          // => false
+matcher(EVIL, "a" * 1000 ++ "b") == true
+matcher(EVIL, "a" * 1000) == false
 
 // size without simplifications
-size(der('a', der('a', EVIL)))             // => 28
-size(der('a', der('a', der('a', EVIL))))   // => 58
+size(der('a', der('a', EVIL))) == 28
+size(der('a', der('a', der('a', EVIL)))) == 58
 
 // size with simplification
-size(simp(der('a', der('a', EVIL))))           // => 8
-size(simp(der('a', der('a', der('a', EVIL))))) // => 8
+size(simp(der('a', der('a', EVIL)))) == 8
+size(simp(der('a', der('a', der('a', EVIL))))) == 8
 
 // Python needs around 30 seconds for matching 28 a's with EVIL. 
 // Java 9 and later increase this to an "astonishing" 40000 a's in

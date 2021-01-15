@@ -56,4 +56,5 @@ def recursive_mega(dim: Int, path: Path, accumulator: List[Path]) : Option[Path]
 def tour_on_mega_board(dim: Int, path: Path) : Option[Path] =
     recursive_mega(dim, path, path::List())
 
+    
 }

@@ -47,6 +47,7 @@ def write(mem: Mem, mp: Int, v: Int) : Mem =
 // until after the *matching* ]-command. Similarly, 
 // jumpLeft implements the move to the left to just after
 // the *matching* [-command.
+
 @tailrec
 def jumpRight(prog: String, pc: Int, level: Int) : Int = {
     if (pc < prog.length() && pc >= 0) prog(pc) match {
@@ -67,14 +68,13 @@ def jumpLeft(prog: String, pc: Int, level: Int) : Int = {
     else pc
 }
 
-
 // testcases
-//jumpRight("""--[..+>--],>,++""", 3, 0)         // => 10
-//jumpLeft("""--[..+>--],>,++""", 8, 0)          // => 3
-//jumpRight("""--[..[+>]--],>,++""", 3, 0)       // => 12
-//jumpRight("""--[..[[-]+>[.]]--],>,++""", 3, 0) // => 18
-//jumpRight("""--[..[[-]+>[.]]--,>,++""", 3, 0)  // => 22 (outside)
-//jumpLeft("""[******]***""", 7, 0)              // => -1 (outside)
+// jumpRight("""--[..+>--],>,++""", 3, 0)  == 10
+// jumpLeft("""--[..+>--],>,++""", 8, 0) == 3
+// jumpRight("""--[..[+>]--],>,++""", 3, 0) == 12
+// jumpRight("""--[..[[-]+>[.]]--],>,++""", 3, 0) == 18
+// jumpRight("""--[..[[-]+>[.]]--,>,++""", 3, 0) == 22 //(outside)
+// jumpLeft("""[******]***""", 7, 0) == -1 //(outside)
 
 
 
@@ -130,8 +130,8 @@ def run(prog: String, m: Mem = Map()) =
 // some sample bf/bf++-programs collected from the Internet
 //==========================================================
 
-// some contrived (small) programs
-//---------------------------------
+// some contrived (small) programs 
+//-----------------------------------
 
 // clears the 0-cell
 //run("[-]", Map(0 -> 100))    // Map will be 0 -> 0
@@ -214,12 +214,10 @@ def run(prog: String, m: Mem = Map()) =
 //       ++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<<><<<""")
 
 
-
 // a Mandelbrot set generator in brainf*** written by Erik Bosman
 // (http://esoteric.sange.fi/brainfuck/utils/mandelbrot/)
 //
 //run(load_bff("mandelbrot.bf"))
-
 
 // a benchmark program (counts down from 'Z' to 'A')
 //
@@ -228,5 +226,6 @@ def run(prog: String, m: Mem = Map()) =
 // calculates the Collatz series for numbers from 1 to 30
 //
 //run(load_bff("collatz.bf"))
+
 
 }

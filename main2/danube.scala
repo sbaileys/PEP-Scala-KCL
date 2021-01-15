@@ -142,8 +142,8 @@ def suggestions(recs: Map[String, List[String]],
 // testcases
 //-----------
 
-//suggestions(ratings_map, "912")
-//suggestions(ratings_map, "912").length  
+// suggestions(ratings_map, "912")
+// suggestions(ratings_map, "912").length  
 // => 4110 suggestions with List(858, 260, 318, 593, ...)
 //    being the most frequently suggested movies
 

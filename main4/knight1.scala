@@ -30,12 +30,12 @@ allMoves.filter(x => is_legal(dim, path, x))
 }
 
 //some testcases
-// assert(legal_moves(8, Nil, (2,2)) == 
+// (legal_moves(8, Nil, (2,2)) == 
 //  List((3,4), (4,3), (4,1), (3,0), (1,0), (0,1), (0,3), (1,4)))
-// assert(legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
-// assert(legal_moves(8, List((4,1), (1,0)), (2,2)) == 
+// (legal_moves(8, Nil, (7,7)) == List((6,5), (5,6)))
+// (legal_moves(8, List((4,1), (1,0)), (2,2)) == 
 //  List((3,4), (4,3), (3,0), (0,1), (0,3), (1,4)))
-// assert(legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6)))
+// (legal_moves(8, List((6,6)), (7,7)) == List((6,5), (5,6)))
 
 
 //(3) Complete the two recursive functions below. 
@@ -75,8 +75,8 @@ def first(xs: List[Pos], f: Pos => Option[Path]) : Option[Path] = xs match {
 
 // testcases
 // def foo(x: (Int, Int)) = if (x._1 > 3) Some(List(x)) else None
-// first(List((1, 0),(2, 0),(3, 0),(4, 0)), foo)   // Some(List((4,0)))
-// first(List((1, 0),(2, 0),(3, 0)), foo)          // None
+// first(List((1, 0),(2, 0),(3, 0),(4, 0)), foo) == Some(List((4,0)))
+// first(List((1, 0),(2, 0),(3, 0)), foo) == None
 
 
 
@@ -88,6 +88,7 @@ def first_tour(dim: Int, path: Path) : Option[Path] = {
     if (path.size == dim * dim) Some(path)
     else first(legal_moves(dim, path, path.head), x => first_tour(dim, x::path))
 }
+
 // //Helper functions
 
 // // for measuring time

@@ -166,7 +166,7 @@ def run2(pg: String, m: Mem = Map()) =
 // string "0" standing for the new bf-command.
 
 def optimise(s: String) : String = 
-  s.replaceAll("""[^<>+-.,\[\]]""", "").replaceAll("""\[-\]""", "0")
+  s.replaceAll("""[^<>+-.,\[\]@#*]""", "").replaceAll("""\[-\]""", "0")
 
 @tailrec
 def compute3(pg: String, tb: Map[Int, Int], pc: Int, mp: Int, mem: Mem) : Mem = {
@@ -207,7 +207,7 @@ def run3(pg: String, m: Mem = Map()) =
 // testcases
 //
 // optimise(load_bff("benchmark.bf"))          // should have inserted 0's
-// optimise(load_bff("mandelbrot.bf")).length  // => 11205
+// optimise(load_bff("mandelbrot.bf")).length == 11205
 // 
 // time_needed(1, run3(load_bff("benchmark.bf")))
 // time_needed(1, run3(load_bff("sierpinski.bf"))) 
